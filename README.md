@@ -150,6 +150,10 @@ EOF  all  create  destroy  help  quit  show  update
 (hbnb) quit
 ```
 
+# RESTful API
+
+New updation to create REST API service for the project.
+
 ## Bugs
 No known bugs at this time. 
 
@@ -158,5 +162,7 @@ Alexa Orrico - [Github](https://github.com/alexaorrico) / [Twitter](https://twit
 Jennifer Huang - [Github](https://github.com/jhuang10123) / [Twitter](https://twitter.com/earthtojhuang)
 
 Second part of Airbnb: Joann Vuong
+
+Third part of Airbnb: Santiago Herrera [Github](https://github.com/SantiagoHerreG) / [Twitter](https://twitter.com/santiherrerago)
 ## License
 Public Domain. No copy write protection. 
