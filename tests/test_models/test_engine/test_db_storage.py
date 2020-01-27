@@ -78,11 +78,108 @@ class TestFileStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        obj = models.storage.all()
+        self.assertIsNotNone(obj)
+        self.assertEqual(type(obj), dict)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_all_by_class(self):
+        """Tests that it returns the list of objects of one type of class
+        """
+        state = State()
+        state.id = 1234553
+        state.name = "California"
+        models.storage.new(state)
+        models.storage.save()
+        key = type(state).__name__ + "." + str(state.id)
+        obj = models.storage.all(State)
+        self.assertTrue(key in obj.keys())
+        self.assertTrue(type(obj[key]) is State)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
 
+        user = User()
+        user.id = 12345588
+        user.name = "Kevin"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        obj = models.storage.all()
+        key = type(user).__name__ + "." + str(user.id)
+        self.assertIsNotNone(obj[key])
+
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+        obj1 = models.storage.all()
+        user = User()
+        user.id = 5588
+        user.name = "Kevin"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        obj2 = models.storage.all()
+        self.assertTrue(len(obj1) < len(obj2))
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_reload_dbstorage(self):
+        """
+        tests reload
+        """
+        session1 = models.storage._DBStorage__session
+        models.storage.reload()
+        session2 = models.storage._DBStorage__session
+        self.assertTrue(session1 is not session2)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_get(self):
+        """Test the method for getting an object from its class and id
+        """
+        obj1 = models.storage.all()
+        user = User()
+        user.id = "12345"
+        user.name = "Kevin"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        user_copy = models.storage.get(User, "12345")
+        print(user.id, user_copy.id)
+        self.assertTrue(user.id == user_copy.id)
+        self.assertTrue(user.name == user_copy.name)
+        self.assertTrue(user.email == user_copy.email)
+        self.assertTrue(user.updated_at == user_copy.updated_at)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count(self):
+        """Tests if count method returns the count of objects of class
+        """
+        count1 = models.storage.count(User)
+        user = User()
+        user.id = "1234567"
+        user.name = "Santi"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        count2 = models.storage.count(User)
+        self.assertTrue(count1 < count2)
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    def test_count_none_cls(self):
+        """Tests if count method returns the count of all objects
+        """
+        count1 = models.storage.count()
+        user = User()
+        user.id = "12345678"
+        user.name = "Herre"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        count2 = models.storage.count()
+        self.assertTrue(count1 < count2)
