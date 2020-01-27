@@ -113,3 +113,52 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_get(self):
+        """Test the method for getting an object from its class and id
+        """
+        obj1 = models.storage.all()
+        user = User()
+        user.id = "12345"
+        user.name = "Kevin"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        user_copy = models.storage.get(User, "12345")
+        print(user.id, user_copy.id)
+        self.assertTrue(user.id == user_copy.id)
+        self.assertTrue(user.name == user_copy.name)
+        self.assertTrue(user.email == user_copy.email)
+        self.assertTrue(user.updated_at == user_copy.updated_at)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count(self):
+        """Tests if count method returns the count of objects of class
+        """
+        count1 = models.storage.count(User)
+        user = User()
+        user.id = "1234567"
+        user.name = "Santi"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        count2 = models.storage.count(User)
+        self.assertTrue(count1 < count2)
+
+    @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
+    def test_count_none_cls(self):
+        """Tests if count method returns the count of all objects
+        """
+        count1 = models.storage.count()
+        user = User()
+        user.id = "12345678"
+        user.name = "Herre"
+        user.email = "1234@yahoo.com"
+        user.password = "hi"
+        models.storage.new(user)
+        user.save()
+        count2 = models.storage.count()
+        self.assertTrue(count1 < count2)
