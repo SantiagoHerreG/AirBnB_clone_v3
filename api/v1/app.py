@@ -5,6 +5,8 @@ from flask import Flask
 from models import storage
 from api.v1.views import app_views
 from os import getenv
+from flask import make_response
+from flask import jsonify
 
 app = Flask(__name__)
 
@@ -16,6 +18,12 @@ def teardown_method(var):
     """ calls storage.close()
     """
     storage.close()
+
+
+@app.errorhandler(404)
+def error_404(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
 
 if __name__ == "__main__":
 
