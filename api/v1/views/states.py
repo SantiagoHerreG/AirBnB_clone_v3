@@ -38,16 +38,13 @@ def update_state(state_id):
     if new_obj is None:
         abort(400, "Not a JSON")
 
-    updated_state = state.to_dict()
     for key, value in new_obj.items():
         if key not in ["id", "created_at", "updated_at"]:
-            updated_state[key] = value
+            setattr(state, key, value)
 
-    state.delete()
-    new_state = State(**updated_state)
-    new_state.save()
+    state.save()
     storage.reload()
-    return jsonify(new_state.to_dict()), 200
+    return jsonify(state.to_dict()), 200
 
 
 @app_views.route("/states", methods=["GET"], strict_slashes=False)

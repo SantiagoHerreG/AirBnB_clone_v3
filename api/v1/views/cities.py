@@ -45,16 +45,13 @@ def update_city(city_id):
     if new_obj is None:
         abort(400, "Not a JSON")
 
-    updated_city = city.to_dict()
     for key, value in new_obj.items():
         if key not in ["id", "state_id", "created_at", "updated_at"]:
-            updated_city[key] = value
+            setattr(city, key, value)
 
-    city.delete()
-    new_city = City(**updated_city)
-    new_city.save()
+    city.save()
     storage.reload()
-    return jsonify(new_city.to_dict()), 200
+    return jsonify(city.to_dict()), 200
 
 
 @app_views.route("/states/<state_id>/cities", methods=["GET"],

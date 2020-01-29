@@ -41,16 +41,13 @@ def update_amenity(amenity_id):
     if new_obj is None:
         abort(400, "Not a JSON")
 
-    updated_amenity = amenity.to_dict()
     for key, value in new_obj.items():
         if key not in ["id", "created_at", "updated_at"]:
-            updated_amenity[key] = value
+            setattr(amenity, key, value)
 
-    amenity.delete()
-    new_amenity = Amenity(**updated_amenity)
-    new_amenity.save()
+    amenity.save()
     storage.reload()
-    return jsonify(new_amenity.to_dict()), 200
+    return jsonify(amenity.to_dict()), 200
 
 
 @app_views.route("/amenities", methods=["GET"], strict_slashes=False)

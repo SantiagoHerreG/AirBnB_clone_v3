@@ -7,15 +7,14 @@ import sqlalchemy
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
 
+
 if models.storage_t == 'db':
     place_amenity = Table('place_amenity', Base.metadata,
                           Column('place_id', String(60),
-                                 ForeignKey('places.id', onupdate='CASCADE',
-                                            ondelete='CASCADE'),
+                                 ForeignKey('places.id'),
                                  primary_key=True),
                           Column('amenity_id', String(60),
-                                 ForeignKey('amenities.id', onupdate='CASCADE',
-                                            ondelete='CASCADE'),
+                                 ForeignKey('amenities.id'),
                                  primary_key=True))
 
 
@@ -33,8 +32,9 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
+        amenity_ids = []
         reviews = relationship("Review", cascade="all,delete", backref="place")
-        amenities = relationship("Amenity", secondary="place_amenity",
+        amenities = relationship("Amenity", secondary=place_amenity,
                                  backref="place_amenities",
                                  viewonly=False)
     else:
@@ -81,6 +81,7 @@ class Place(BaseModel, Base):
         def amenities(self, obj):
             """Handles new append method for saving amenities ids
             """
+            from models.amenity import Amenity
             if type(obj) == Amenity:
                 self.append(obj)
 
