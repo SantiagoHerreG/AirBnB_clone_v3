@@ -33,7 +33,7 @@ class Place(BaseModel, Base):
         price_by_night = Column(Integer, nullable=False, default=0)
         latitude = Column(Float, nullable=True)
         longitude = Column(Float, nullable=True)
-        reviews = relationship("Review", backref="place")
+        reviews = relationship("Review", cascade="all,delete", backref="place")
         amenities = relationship("Amenity", secondary="place_amenity",
                                  backref="place_amenities",
                                  viewonly=False)
@@ -76,3 +76,15 @@ class Place(BaseModel, Base):
                 if amenity.place_id == self.id:
                     amenity_list.append(amenity)
             return amenity_list
+
+        @amenities.setter
+        def amenities(self, obj):
+            """Handles new append method for saving amenities ids
+            """
+            if type(obj) == Amenity:
+                self.append(obj)
+
+            def append(self, obj):
+                """Method that appends
+                """
+                self.amenity_ids.append(obj)
