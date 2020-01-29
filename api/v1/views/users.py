@@ -61,7 +61,7 @@ def users():
     return jsonify(list_res)
 
 
-@app_views.route("/user/<user_id>", methods=["DELETE"],
+@app_views.route("/users/<user_id>", methods=["DELETE"],
                  strict_slashes=False)
 def delete_user(user_id):
     """Deletes a user by its id
