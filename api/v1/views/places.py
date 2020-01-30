@@ -13,7 +13,7 @@ from flask import request
 
 @app_views.route("/cities/<city_id>/places", methods=["POST"],
                  strict_slashes=False)
-def new_place():
+def new_place(city_id):
     """Creates a Place
     """
     if storage.get(City, city_id) is None:
@@ -24,7 +24,7 @@ def new_place():
         abort(400, "Not a JSON")
 
     if "user_id" not in new_obj.keys():
-        abort(400, "Missing name")
+        abort(400, "Missing user_id")
 
     if storage.get(User, new_obj["user_id"]) is None:
         abort(404)
@@ -32,7 +32,8 @@ def new_place():
     if "name" not in new_obj.keys():
         abort(400, "Missing name")
 
-    new_user = User(**new_obj)
+    new_obj["city_id"] = city_id
+    new_user = Place(**new_obj)
     new_user.save()
     storage.reload()
     return jsonify(new_user.to_dict()), 201
@@ -43,7 +44,7 @@ def update_place(place_id):
     """Updates a Place object
     """
     place = storage.get(Place, place_id)
-    if user is None:
+    if place is None:
         abort(404)
 
     new_obj = request.get_json()

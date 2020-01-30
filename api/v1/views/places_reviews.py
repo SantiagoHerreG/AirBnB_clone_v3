@@ -33,6 +33,7 @@ def new_review(place_id):
     if "text" not in new_obj.keys():
         abort(400, "Missing text")
 
+    new_obj["place_id"] = place_id
     new_review = Review(**new_obj)
     new_review.save()
     storage.reload()
