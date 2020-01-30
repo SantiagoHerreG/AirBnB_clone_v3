@@ -27,7 +27,8 @@ def new_review(place_id):
     if "user_id" not in new_obj.keys():
         abort(400, "Missing user_id")
 
-    if storage.get(User, new_obj["user_id"]) is None:
+    user = storage.get(User, new_obj["user_id"])
+    if user is None:
         abort(404)
 
     if "text" not in new_obj.keys():
