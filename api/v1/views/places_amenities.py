@@ -7,7 +7,6 @@ from flask import jsonify
 from flask import abort
 from models import storage
 from models.place import Place
-from models.place import place_amenity
 from models.amenity import Amenity
 from flask import request
 
@@ -29,10 +28,7 @@ def new_amenity_for_place(place_id, amenity_id):
         return jsonify(amenity.to_dict()), 200
 
     if models.storage_t == 'db':
-        ins = place_amenity.insert().values(place_id=place_id,
-                                            amenity_id=amenity_id)
-        conn = storage._DBStorage__engine.connect()
-        conn.execute(ins)
+        place.amenities.append(amenity)
     else:
         place.amenity_ids.append(amenity_id)
     storage.save()
